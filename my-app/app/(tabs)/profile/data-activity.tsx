@@ -1,19 +1,23 @@
-import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
+import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { profileListStyles } from '@/constants/profile-list';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { defaultActivity } from '@/lib/profile-placeholder';
 
-export default function DataActivityScreen() {
+const DataActivityScreen: React.FC = () => {
+  const separatorColor = useThemeColor({}, 'separator');
+  const destructiveColor = useThemeColor({}, 'destructive');
   const [activity] = useState(defaultActivity);
 
-  const handleDataExport = () => {
+  const handleDataExport = useCallback((): void => {
     Alert.alert('Data export', 'Placeholder: request a copy of your data.');
-  };
+  }, []);
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = useCallback((): void => {
     Alert.alert(
       'Delete account',
       'This will permanently delete your account and all data. This action cannot be undone.',
@@ -22,7 +26,15 @@ export default function DataActivityScreen() {
         { text: 'Delete account', style: 'destructive', onPress: () => {} },
       ]
     );
-  };
+  }, []);
+
+  const activityRows = useMemo(
+    () => [
+      { label: 'Last login', value: activity.lastLogin },
+      { label: 'Activity summary', value: activity.activitySummary },
+    ],
+    [activity.lastLogin, activity.activitySummary]
+  );
 
   return (
     <ThemedView style={styles.container}>
@@ -30,81 +42,59 @@ export default function DataActivityScreen() {
         style={profileListStyles.scroll}
         contentContainerStyle={profileListStyles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Activity</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            <View style={[profileListStyles.row, profileListStyles.rowBorder]}>
-              <ThemedText style={profileListStyles.rowLabel}>Last login</ThemedText>
-              <ThemedText style={profileListStyles.rowValueMuted}>{activity.lastLogin}</ThemedText>
-            </View>
-            <View style={profileListStyles.row}>
-              <ThemedText style={profileListStyles.rowLabel}>Activity summary</ThemedText>
-              <ThemedText style={profileListStyles.rowValueMuted}>
-                {activity.activitySummary}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
+        <ProfileSection title="Activity">
+          <ProfileGroup>
+            {activityRows.map((row, index) => (
+              <ProfileRow
+                key={row.label}
+                label={row.label}
+                value={row.value}
+                valueSecondary
+                hasBorder={index < activityRows.length - 1}
+                borderColor={separatorColor}
+                accessibilityRole="none"
+              />
+            ))}
+          </ProfileGroup>
+        </ProfileSection>
 
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Data</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            <Pressable
+        <ProfileSection title="Data">
+          <ProfileGroup>
+            <ProfileRow
+              label="Export my data"
+              showDisclosure
+              hasBorder={false}
               onPress={handleDataExport}
-              style={({ pressed }) => [
-                profileListStyles.row,
-                pressed && styles.pressed,
-              ]}>
-              <ThemedText style={profileListStyles.rowLabel}>Export my data</ThemedText>
-              <ThemedText style={profileListStyles.rowValueMuted}>›</ThemedText>
-            </Pressable>
-          </View>
-        </View>
+              accessibilityLabel="Export my data"
+            />
+          </ProfileGroup>
+        </ProfileSection>
 
-        <View style={profileListStyles.section}>
+        <ProfileSection>
           <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={[styles.sectionTitle, styles.dangerTitle]}>Danger zone</ThemedText>
+            <ThemedText type="sectionHeader" style={{ color: destructiveColor }}>
+              Danger zone
+            </ThemedText>
           </View>
-          <View style={profileListStyles.dangerZone}>
-            <Pressable
+          <ProfileGroup>
+            <ProfileRow
+              label="Delete account"
+              labelColorName="destructive"
               onPress={handleDeleteAccount}
-              style={({ pressed }) => [
-                profileListStyles.dangerRow,
-                pressed && styles.pressed,
-              ]}>
-              <ThemedText style={styles.dangerText}>Delete account</ThemedText>
-            </Pressable>
-          </View>
-        </View>
+              hasBorder={false}
+              accessibilityLabel="Delete account"
+            />
+          </ProfileGroup>
+        </ProfileSection>
       </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default DataActivityScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    opacity: 0.7,
-    textTransform: 'uppercase',
-  },
-  dangerTitle: {
-    color: '#dc3545',
-    opacity: 1,
-  },
-  dangerText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#dc3545',
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

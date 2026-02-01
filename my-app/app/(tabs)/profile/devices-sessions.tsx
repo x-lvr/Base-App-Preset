@@ -1,31 +1,34 @@
-import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
+import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
 import { ThemedView } from '@/components/themed-view';
 import { profileListStyles } from '@/constants/profile-list';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { defaultSessions, type SessionItem } from '@/lib/profile-placeholder';
 
-function SessionRow({ item, isLast }: { item: SessionItem; isLast: boolean }) {
-  return (
-    <View style={[profileListStyles.row, !isLast && profileListStyles.rowBorder]}>
-      <View style={styles.sessionInfo}>
-        <ThemedText style={styles.deviceName}>
-          {item.deviceName}
-          {item.isCurrent ? ' (this device)' : ''}
-        </ThemedText>
-        <ThemedText style={styles.sessionMeta}>
-          {item.platform} · {item.lastActive}
-        </ThemedText>
-      </View>
-    </View>
-  );
+interface SessionRowProps {
+  item: SessionItem;
+  isLast: boolean;
+  separatorColor: string;
 }
 
-export default function DevicesSessionsScreen() {
+const SessionRow: React.FC<SessionRowProps> = ({ item, isLast, separatorColor }) => (
+  <ProfileRow
+    label={`${item.deviceName}${item.isCurrent ? ' (this device)' : ''}`}
+    value={`${item.platform} · ${item.lastActive}`}
+    valueSecondary
+    hasBorder={!isLast}
+    borderColor={separatorColor}
+    accessibilityRole="none"
+  />
+);
+
+const DevicesSessionsScreen: React.FC = () => {
+  const separatorColor = useThemeColor({}, 'separator');
   const [sessions] = useState(defaultSessions);
 
-  const handleLogoutOtherDevices = () => {
+  const handleLogoutOtherDevices = useCallback((): void => {
     Alert.alert(
       'Log out from other devices',
       'You will stay logged in on this device. Other sessions will be signed out.',
@@ -34,7 +37,12 @@ export default function DevicesSessionsScreen() {
         { text: 'Log out others', style: 'destructive', onPress: () => {} },
       ]
     );
-  };
+  }, []);
+
+  const sessionRows = useMemo(
+    () => sessions.map((item, index) => ({ item, isLast: index === sessions.length - 1 })),
+    [sessions]
+  );
 
   return (
     <ThemedView style={styles.container}>
@@ -42,68 +50,39 @@ export default function DevicesSessionsScreen() {
         style={profileListStyles.scroll}
         contentContainerStyle={profileListStyles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Active sessions</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            {sessions.map((item, index) => (
+        <ProfileSection title="Active sessions">
+          <ProfileGroup>
+            {sessionRows.map(({ item, isLast }) => (
               <SessionRow
                 key={item.id}
                 item={item}
-                isLast={index === sessions.length - 1}
+                isLast={isLast}
+                separatorColor={separatorColor}
               />
             ))}
-          </View>
-        </View>
+          </ProfileGroup>
+        </ProfileSection>
 
-        <View style={profileListStyles.section}>
-          <Pressable
-            onPress={handleLogoutOtherDevices}
-            style={({ pressed }) => [
-              profileListStyles.row,
-              styles.logoutOthersButton,
-              pressed && styles.pressed,
-            ]}>
-            <ThemedText style={styles.logoutOthersText}>Log out from other devices</ThemedText>
-          </Pressable>
-        </View>
+        <ProfileSection>
+          <ProfileGroup>
+            <ProfileRow
+              label="Log out from other devices"
+              labelColorName="accent"
+              onPress={handleLogoutOtherDevices}
+              hasBorder={false}
+              accessibilityLabel="Log out from other devices"
+            />
+          </ProfileGroup>
+        </ProfileSection>
       </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default DevicesSessionsScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    opacity: 0.7,
-    textTransform: 'uppercase',
-  },
-  sessionInfo: {
-    flex: 1,
-  },
-  deviceName: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  sessionMeta: {
-    fontSize: 13,
-    opacity: 0.7,
-    marginTop: 2,
-  },
-  logoutOthersButton: {
-    justifyContent: 'center',
-  },
-  logoutOthersText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#0a7ea4',
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

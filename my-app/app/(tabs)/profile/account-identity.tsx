@@ -1,11 +1,19 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
+import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
 import { ThemedView } from '@/components/themed-view';
 import { profileListStyles } from '@/constants/profile-list';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { defaultProfile } from '@/lib/profile-placeholder';
 
-const rows = [
+interface AccountRow {
+  label: string;
+  value: string;
+  readOnly?: boolean;
+}
+
+const ACCOUNT_ROWS: ReadonlyArray<AccountRow> = [
   { label: 'Email address', value: defaultProfile.email },
   { label: 'Phone number', value: defaultProfile.phone },
   { label: 'Region / country', value: defaultProfile.region },
@@ -14,48 +22,40 @@ const rows = [
   { label: 'Account created', value: defaultProfile.accountCreatedAt, readOnly: true },
 ];
 
-export default function AccountIdentityScreen() {
+const AccountIdentityScreen: React.FC = () => {
+  const separatorColor = useThemeColor({}, 'separator');
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView
         style={profileListStyles.scroll}
         contentContainerStyle={profileListStyles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Account & Identity</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            {rows.map((item, index) => (
-              <View
+        <ProfileSection title="Account & Identity">
+          <ProfileGroup>
+            {ACCOUNT_ROWS.map((item, index) => (
+              <ProfileRow
                 key={item.label}
-                style={[
-                  profileListStyles.row,
-                  index < rows.length - 1 && profileListStyles.rowBorder,
-                ]}>
-                <ThemedText style={profileListStyles.rowLabel}>{item.label}</ThemedText>
-                <ThemedText
-                  style={item.readOnly ? profileListStyles.rowValueMuted : profileListStyles.rowValue}
-                  numberOfLines={1}>
-                  {item.value}
-                </ThemedText>
-              </View>
+                label={item.label}
+                value={item.value}
+                valueSecondary={item.readOnly ?? false}
+                hasBorder={index < ACCOUNT_ROWS.length - 1}
+                borderColor={separatorColor}
+                accessibilityLabel={`${item.label}: ${item.value}`}
+                accessibilityRole="none"
+              />
             ))}
-          </View>
-        </View>
+          </ProfileGroup>
+        </ProfileSection>
       </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default AccountIdentityScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    opacity: 0.7,
-    textTransform: 'uppercase',
   },
 });

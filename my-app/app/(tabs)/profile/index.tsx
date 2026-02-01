@@ -1,26 +1,44 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { RADIUS_SMALL, Spacing } from '@/constants/design-system';
 import { profileListStyles } from '@/constants/profile-list';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { defaultProfile } from '@/lib/profile-placeholder';
 
 const AVATAR_SIZE = 96;
 
-export default function ProfileScreen() {
-  const [profile] = useState(defaultProfile);
-  const displayName = [profile.firstName, profile.lastName].filter(Boolean).join(' ') || 'User';
-  const primaryContact = profile.email || profile.phone || '—';
+type ProfileRoute =
+  | '/profile/edit'
+  | '/profile/account-identity'
+  | '/profile/security-privacy'
+  | '/profile/devices-sessions'
+  | '/profile/data-activity';
 
-  const quickActions = [
-    { label: 'Edit Profile', href: '/profile/edit' },
-    { label: 'Account & Identity', href: '/profile/account-identity' },
-    { label: 'Security & Privacy', href: '/profile/security-privacy' },
-    { label: 'Devices / Sessions', href: '/profile/devices-sessions' },
-  ] as const;
+const QUICK_ACTIONS: ReadonlyArray<{ label: string; href: ProfileRoute }> = [
+  { label: 'Edit Profile', href: '/profile/edit' },
+  { label: 'Account & Identity', href: '/profile/account-identity' },
+  { label: 'Security & Privacy', href: '/profile/security-privacy' },
+  { label: 'Devices / Sessions', href: '/profile/devices-sessions' },
+] as const;
+
+const ProfileScreen: React.FC = () => {
+  const router = useRouter();
+  const surfaceColor = useThemeColor({}, 'surface');
+  const separatorColor = useThemeColor({}, 'separator');
+  const secondaryColor = useThemeColor({}, 'secondary');
+  const [profile] = useState(defaultProfile);
+
+  const displayName = useMemo(
+    () => [profile.firstName, profile.lastName].filter(Boolean).join(' ') || 'User',
+    [profile.firstName, profile.lastName]
+  );
+  const primaryContact = profile.email || profile.phone || '—';
 
   return (
     <ThemedView style={styles.container}>
@@ -31,68 +49,73 @@ export default function ProfileScreen() {
         {/* Avatar & identity */}
         <View style={styles.header}>
           <Link href="/profile/edit" asChild>
-            <Pressable style={({ pressed }) => [styles.avatarWrap, pressed && styles.avatarPressed]}>
+            <Pressable
+              style={({ pressed }) => [styles.avatarWrap, pressed && styles.avatarPressed]}
+              accessibilityLabel="Edit profile photo"
+              accessibilityRole="button">
               {profile.avatarUri ? (
                 <Image source={{ uri: profile.avatarUri }} style={styles.avatar} />
               ) : (
-                <View style={styles.avatarPlaceholder}>
-                  <ThemedText type="title" style={styles.avatarInitials}>
+                <View style={[styles.avatarPlaceholder, { backgroundColor: secondaryColor }]}>
+                  <ThemedText type="titleLarge" style={styles.avatarInitials}>
                     {profile.firstName?.[0] ?? ''}{profile.lastName?.[0] ?? ''}
                   </ThemedText>
                 </View>
               )}
             </Pressable>
           </Link>
-          <ThemedText type="title" style={styles.displayName}>
+          <ThemedText type="titleLarge" style={styles.displayName}>
             {displayName}
           </ThemedText>
           {profile.username ? (
-            <ThemedText style={styles.username}>@{profile.username}</ThemedText>
+            <ThemedText type="bodySecondary" colorName="secondary" style={styles.username}>
+              @{profile.username}
+            </ThemedText>
           ) : null}
-          <ThemedText style={styles.primaryContact}>{primaryContact}</ThemedText>
-          <View style={styles.badge}>
-            <ThemedText style={styles.badgeText}>{profile.accountStatus}</ThemedText>
+          <ThemedText type="bodySecondary" colorName="secondary" style={styles.primaryContact}>
+            {primaryContact}
+          </ThemedText>
+          <View style={[styles.badge, { backgroundColor: surfaceColor }]}>
+            <ThemedText type="caption" colorName="secondary">
+              {profile.accountStatus}
+            </ThemedText>
           </View>
         </View>
 
-        {/* Quick actions */}
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.group}>
-            {quickActions.map((action, index) => (
-              <Link key={action.href} href={action.href as any} asChild>
-                <Pressable
-                  style={({ pressed }) => [
-                    profileListStyles.row,
-                    index < quickActions.length - 1 && profileListStyles.rowBorder,
-                    pressed && styles.rowPressed,
-                  ]}>
-                  <ThemedText style={profileListStyles.rowLabel}>{action.label}</ThemedText>
-                  <ThemedText style={profileListStyles.rowValueMuted}>›</ThemedText>
-                </Pressable>
-              </Link>
+        {/* Account, Security, Preferences (grouped) */}
+        <ProfileSection>
+          <ProfileGroup>
+            {QUICK_ACTIONS.map((action, index) => (
+              <ProfileRow
+                key={action.href}
+                label={action.label}
+                showDisclosure
+                hasBorder={index < QUICK_ACTIONS.length - 1}
+                borderColor={separatorColor}
+                onPress={() => router.push(action.href)}
+                accessibilityLabel={action.label}
+              />
             ))}
-          </View>
-        </View>
+          </ProfileGroup>
+        </ProfileSection>
 
-        {/* Data & Activity link */}
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.group}>
-            <Link href="/profile/data-activity" asChild>
-              <Pressable
-                style={({ pressed }) => [
-                  profileListStyles.row,
-                  pressed && styles.rowPressed,
-                ]}>
-                <ThemedText style={profileListStyles.rowLabel}>Data & Activity</ThemedText>
-                <ThemedText style={profileListStyles.rowValueMuted}>›</ThemedText>
-              </Pressable>
-            </Link>
-          </View>
-        </View>
+        <ProfileSection>
+          <ProfileGroup>
+            <ProfileRow
+              label="Data & Activity"
+              showDisclosure
+              hasBorder={false}
+              onPress={() => router.push('/profile/data-activity')}
+              accessibilityLabel="Data & Activity"
+            />
+          </ProfileGroup>
+        </ProfileSection>
       </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -100,11 +123,11 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing.md,
   },
   avatarWrap: {
-    marginBottom: 12,
+    marginBottom: Spacing.sm,
   },
   avatarPressed: {
     opacity: 0.8,
@@ -118,38 +141,24 @@ const styles = StyleSheet.create({
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: 'rgba(128,128,128,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarInitials: {
-    fontSize: 32,
     color: '#fff',
   },
   displayName: {
-    marginBottom: 4,
+    marginBottom: Spacing.xxs,
   },
   username: {
-    fontSize: 15,
-    opacity: 0.8,
-    marginBottom: 4,
+    marginBottom: Spacing.xxs,
   },
   primaryContact: {
-    fontSize: 15,
-    opacity: 0.8,
-    marginBottom: 8,
+    marginBottom: Spacing.xs,
   },
   badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: 'rgba(128,128,128,0.2)',
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  rowPressed: {
-    opacity: 0.7,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xxs,
+    borderRadius: RADIUS_SMALL,
   },
 });

@@ -1,34 +1,35 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+
+import {
+  Spacing,
+  ROW_MIN_HEIGHT,
+  RADIUS_GROUP,
+  PAGE_HORIZONTAL,
+  SECTION_VERTICAL,
+} from './design-system';
 
 /**
- * Shared list styles for profile pages.
- * iOS: grouped list (rounded sections, inset).
- * Android: Material-style rows.
+ * Shared list styles for profile / settings pages.
+ * Standardized: 8-pt grid, row height 48–56, group radius 14.
  */
-const LIST_HORIZONTAL = 16;
-const LIST_SECTION_SPACING = 24;
-const ROW_PADDING_V = 12;
-const ROW_PADDING_H = 16;
-const ROW_MIN_HEIGHT = 44;
-const SECTION_HEADER_MARGIN_BOTTOM = 8;
-
 export const profileListStyles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 32,
+    paddingBottom: Spacing.xxl,
   },
   section: {
-    marginBottom: LIST_SECTION_SPACING,
-    marginHorizontal: LIST_HORIZONTAL,
+    marginBottom: Spacing.xl,
+    marginHorizontal: PAGE_HORIZONTAL,
   },
   sectionHeader: {
-    marginBottom: SECTION_HEADER_MARGIN_BOTTOM,
-    paddingHorizontal: 4,
+    marginBottom: Spacing.xs,
+    paddingHorizontal: Spacing.xxs,
+    paddingVertical: Spacing.xxs,
   },
   group: {
-    borderRadius: Platform.OS === 'ios' ? 10 : 4,
+    borderRadius: RADIUS_GROUP,
     overflow: 'hidden',
   },
   row: {
@@ -36,11 +37,8 @@ export const profileListStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     minHeight: ROW_MIN_HEIGHT,
-    paddingVertical: ROW_PADDING_V,
-    paddingHorizontal: ROW_PADDING_H,
-  },
-  rowSingle: {
-    borderBottomWidth: 0,
+    paddingVertical: SECTION_VERTICAL,
+    paddingHorizontal: PAGE_HORIZONTAL,
   },
   rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -48,29 +46,33 @@ export const profileListStyles = StyleSheet.create({
   rowLabel: {
     flex: 1,
     fontSize: 16,
+    lineHeight: 24,
   },
   rowValue: {
     fontSize: 16,
-    marginLeft: 8,
+    lineHeight: 24,
+    marginLeft: Spacing.xs,
   },
-  rowValueMuted: {
+  rowValueSecondary: {
     fontSize: 14,
-    marginLeft: 8,
-    opacity: 0.7,
+    lineHeight: 20,
+    marginLeft: Spacing.xs,
   },
   dangerRow: {
     minHeight: ROW_MIN_HEIGHT,
-    paddingVertical: ROW_PADDING_V,
-    paddingHorizontal: ROW_PADDING_H,
+    paddingVertical: SECTION_VERTICAL,
+    paddingHorizontal: PAGE_HORIZONTAL,
     alignItems: 'center',
     justifyContent: 'center',
   },
   dangerZone: {
-    marginTop: 32,
-    marginHorizontal: LIST_HORIZONTAL,
-    borderRadius: Platform.OS === 'ios' ? 10 : 4,
+    marginTop: Spacing.xxl,
+    marginHorizontal: PAGE_HORIZONTAL,
+    borderRadius: RADIUS_GROUP,
     overflow: 'hidden',
   },
 });
 
-export { LIST_HORIZONTAL, ROW_PADDING_H, ROW_PADDING_V };
+export const LIST_HORIZONTAL = PAGE_HORIZONTAL;
+export const ROW_PADDING_H = PAGE_HORIZONTAL;
+export const ROW_PADDING_V = SECTION_VERTICAL;

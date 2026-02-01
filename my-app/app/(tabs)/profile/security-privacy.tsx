@@ -1,12 +1,16 @@
-import { useState } from 'react';
-import { Alert, Pressable, ScrollView, Switch, StyleSheet, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Alert, ScrollView, Switch, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
+import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
 import { ThemedView } from '@/components/themed-view';
 import { profileListStyles } from '@/constants/profile-list';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { defaultSecurityPrivacy } from '@/lib/profile-placeholder';
 
-export default function SecurityPrivacyScreen() {
+const SecurityPrivacyScreen: React.FC = () => {
+  const separatorColor = useThemeColor({}, 'separator');
+  const accentColor = useThemeColor({}, 'accent');
+
   const [biometricEnabled, setBiometricEnabled] = useState(
     defaultSecurityPrivacy.biometricEnabled
   );
@@ -20,9 +24,11 @@ export default function SecurityPrivacyScreen() {
     defaultSecurityPrivacy.activityVisibility
   );
 
-  const handleChangePassword = () => {
+  const handleChangePassword = useCallback((): void => {
     Alert.alert('Change Password', 'Placeholder: open change password flow.');
-  };
+  }, []);
+
+  const trackColor = { false: '#767577', true: accentColor };
 
   return (
     <ThemedView style={styles.container}>
@@ -30,78 +36,82 @@ export default function SecurityPrivacyScreen() {
         style={profileListStyles.scroll}
         contentContainerStyle={profileListStyles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        {/* Security */}
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Security</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            <Pressable
-              style={[profileListStyles.row, profileListStyles.rowBorder]}
-              onPress={handleChangePassword}>
-              <ThemedText style={profileListStyles.rowLabel}>Change password</ThemedText>
-              <ThemedText style={profileListStyles.rowValueMuted}>›</ThemedText>
-            </Pressable>
-            <View style={[profileListStyles.row, profileListStyles.rowBorder]}>
-              <ThemedText style={profileListStyles.rowLabel}>Biometric authentication</ThemedText>
-              <Switch
-                value={biometricEnabled}
-                onValueChange={setBiometricEnabled}
-                trackColor={{ false: '#767577', true: '#0a7ea4' }}
-                thumbColor="#fff"
-              />
-            </View>
-            <View style={profileListStyles.row}>
-              <ThemedText style={profileListStyles.rowLabel}>Two-factor authentication</ThemedText>
-              <Switch
-                value={twoFactorEnabled}
-                onValueChange={setTwoFactorEnabled}
-                trackColor={{ false: '#767577', true: '#0a7ea4' }}
-                thumbColor="#fff"
-              />
-            </View>
-          </View>
-        </View>
+        <ProfileSection title="Security">
+          <ProfileGroup>
+            <ProfileRow
+              label="Change password"
+              showDisclosure
+              hasBorder
+              borderColor={separatorColor}
+              onPress={handleChangePassword}
+              accessibilityLabel="Change password"
+            />
+            <ProfileRow
+              label="Biometric authentication"
+              rightElement={
+                <Switch
+                  value={biometricEnabled}
+                  onValueChange={setBiometricEnabled}
+                  trackColor={trackColor}
+                  thumbColor="#fff"
+                />
+              }
+              hasBorder
+              borderColor={separatorColor}
+            />
+            <ProfileRow
+              label="Two-factor authentication"
+              rightElement={
+                <Switch
+                  value={twoFactorEnabled}
+                  onValueChange={setTwoFactorEnabled}
+                  trackColor={trackColor}
+                  thumbColor="#fff"
+                />
+              }
+              hasBorder={false}
+            />
+          </ProfileGroup>
+        </ProfileSection>
 
-        {/* Privacy */}
-        <View style={profileListStyles.section}>
-          <View style={profileListStyles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Privacy</ThemedText>
-          </View>
-          <View style={profileListStyles.group}>
-            <View style={[profileListStyles.row, profileListStyles.rowBorder]}>
-              <ThemedText style={profileListStyles.rowLabel}>Profile visibility</ThemedText>
-              <Switch
-                value={profileVisibility}
-                onValueChange={setProfileVisibility}
-                trackColor={{ false: '#767577', true: '#0a7ea4' }}
-                thumbColor="#fff"
-              />
-            </View>
-            <View style={profileListStyles.row}>
-              <ThemedText style={profileListStyles.rowLabel}>Activity visibility</ThemedText>
-              <Switch
-                value={activityVisibility}
-                onValueChange={setActivityVisibility}
-                trackColor={{ false: '#767577', true: '#0a7ea4' }}
-                thumbColor="#fff"
-              />
-            </View>
-          </View>
-        </View>
+        <ProfileSection title="Privacy">
+          <ProfileGroup>
+            <ProfileRow
+              label="Profile visibility"
+              rightElement={
+                <Switch
+                  value={profileVisibility}
+                  onValueChange={setProfileVisibility}
+                  trackColor={trackColor}
+                  thumbColor="#fff"
+                />
+              }
+              hasBorder
+              borderColor={separatorColor}
+            />
+            <ProfileRow
+              label="Activity visibility"
+              rightElement={
+                <Switch
+                  value={activityVisibility}
+                  onValueChange={setActivityVisibility}
+                  trackColor={trackColor}
+                  thumbColor="#fff"
+                />
+              }
+              hasBorder={false}
+            />
+          </ProfileGroup>
+        </ProfileSection>
       </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default SecurityPrivacyScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    opacity: 0.7,
-    textTransform: 'uppercase',
   },
 });
