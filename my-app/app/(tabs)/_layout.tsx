@@ -1,4 +1,4 @@
-import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function TabLayout() {
   return (
@@ -18,10 +18,6 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="profile">
         <Label>Profile</Label>
         <Icon sf="person.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <Label>Settings</Label>
-        <Icon sf="gear" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
