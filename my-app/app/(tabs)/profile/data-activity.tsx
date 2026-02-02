@@ -1,37 +1,37 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 
-import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { profileListStyles } from '@/constants/profile-list';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { defaultActivity } from '@/lib/profile-placeholder';
+import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { profileListStyles } from "@/constants/profile-list";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { defaultActivity } from "@/lib/profile-placeholder";
 
 const DataActivityScreen: React.FC = () => {
-  const separatorColor = useThemeColor({}, 'separator');
-  const destructiveColor = useThemeColor({}, 'destructive');
+  const separatorColor = useThemeColor({}, "separator");
+  const destructiveColor = useThemeColor({}, "destructive");
   const [activity] = useState(defaultActivity);
 
   const handleDataExport = useCallback((): void => {
-    Alert.alert('Data export', 'Placeholder: request a copy of your data.');
+    Alert.alert("Data export", "Placeholder: request a copy of your data.");
   }, []);
 
   const handleDeleteAccount = useCallback((): void => {
     Alert.alert(
-      'Delete account',
-      'This will permanently delete your account and all data. This action cannot be undone.',
+      "Delete account",
+      "This will permanently delete your account and all data. This action cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete account', style: 'destructive', onPress: () => {} },
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete account", style: "destructive", onPress: () => {} },
       ]
     );
   }, []);
 
   const activityRows = useMemo(
     () => [
-      { label: 'Last login', value: activity.lastLogin },
-      { label: 'Activity summary', value: activity.activitySummary },
+      { label: "Last login", value: activity.lastLogin },
+      { label: "Activity summary", value: activity.activitySummary },
     ],
     [activity.lastLogin, activity.activitySummary]
   );
@@ -39,9 +39,12 @@ const DataActivityScreen: React.FC = () => {
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={profileListStyles.scroll}
+        style={[profileListStyles.scroll, { paddingTop: 40 }]}
         contentContainerStyle={profileListStyles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        directionalLockEnabled={true}
+        scrollEventThrottle={16}
+      >
         <ProfileSection title="Activity">
           <ProfileGroup>
             {activityRows.map((row, index) => (
@@ -72,7 +75,10 @@ const DataActivityScreen: React.FC = () => {
 
         <ProfileSection>
           <View style={profileListStyles.sectionHeader}>
-            <ThemedText type="sectionHeader" style={{ color: destructiveColor }}>
+            <ThemedText
+              type="sectionHeader"
+              style={{ color: destructiveColor }}
+            >
               Danger zone
             </ThemedText>
           </View>

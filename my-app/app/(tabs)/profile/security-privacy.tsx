@@ -1,15 +1,15 @@
-import React, { useCallback, useState } from 'react';
-import { Alert, ScrollView, Switch, StyleSheet, View } from 'react-native';
+import React, { useCallback, useState } from "react";
+import { Alert, ScrollView, StyleSheet, Switch } from "react-native";
 
-import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
-import { ThemedView } from '@/components/themed-view';
-import { profileListStyles } from '@/constants/profile-list';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { defaultSecurityPrivacy } from '@/lib/profile-placeholder';
+import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
+import { ThemedView } from "@/components/themed-view";
+import { profileListStyles } from "@/constants/profile-list";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { defaultSecurityPrivacy } from "@/lib/profile-placeholder";
 
 const SecurityPrivacyScreen: React.FC = () => {
-  const separatorColor = useThemeColor({}, 'separator');
-  const accentColor = useThemeColor({}, 'accent');
+  const separatorColor = useThemeColor({}, "separator");
+  const accentColor = useThemeColor({}, "accent");
 
   const [biometricEnabled, setBiometricEnabled] = useState(
     defaultSecurityPrivacy.biometricEnabled
@@ -25,17 +25,20 @@ const SecurityPrivacyScreen: React.FC = () => {
   );
 
   const handleChangePassword = useCallback((): void => {
-    Alert.alert('Change Password', 'Placeholder: open change password flow.');
+    Alert.alert("Change Password", "Placeholder: open change password flow.");
   }, []);
 
-  const trackColor = { false: '#767577', true: accentColor };
+  const trackColor = { false: "#767577", true: accentColor };
 
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={profileListStyles.scroll}
+        style={[profileListStyles.scroll, { paddingTop: 40 }]}
         contentContainerStyle={profileListStyles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        directionalLockEnabled={true}
+        scrollEventThrottle={16}
+      >
         <ProfileSection title="Security">
           <ProfileGroup>
             <ProfileRow

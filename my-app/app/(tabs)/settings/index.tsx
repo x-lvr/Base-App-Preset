@@ -1,11 +1,13 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function SettingsScreen() {
+  const backgroundColor = useThemeColor({}, "background");
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: 40, backgroundColor }]}>
       <View style={styles.content}>
         <ThemedText type="title">Settings</ThemedText>
         <ThemedText>Your settings content goes here.</ThemedText>
@@ -20,8 +22,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
   },
 });

@@ -1,32 +1,35 @@
-import { useRouter } from 'expo-router';
-import { Image } from 'expo-image';
-import React, { useState } from 'react';
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
+    Alert,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    View,
+} from "react-native";
 
-import { ProfileGroup, ProfileRow, ProfileSection } from '@/components/profile';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { RADIUS_SMALL, Spacing } from '@/constants/design-system';
-import { profileListStyles } from '@/constants/profile-list';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { defaultProfile } from '@/lib/profile-placeholder';
+import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import {
+    RADIUS_SMALL,
+    Spacing
+} from "@/constants/design-system";
+import { profileListStyles } from "@/constants/profile-list";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { defaultProfile } from "@/lib/profile-placeholder";
 
 const BIO_MAX_LENGTH = 120;
 const AVATAR_SIZE = 80;
 
 const EditProfileScreen: React.FC = () => {
   const router = useRouter();
-  const textColor = useThemeColor({}, 'text');
-  const secondaryColor = useThemeColor({}, 'secondary');
-  const separatorColor = useThemeColor({}, 'separator');
-  const accentColor = useThemeColor({}, 'accent');
+  const textColor = useThemeColor({}, "text");
+  const secondaryColor = useThemeColor({}, "secondary");
+  const separatorColor = useThemeColor({}, "separator");
+  const accentColor = useThemeColor({}, "accent");
 
   const [firstName, setFirstName] = useState(defaultProfile.firstName);
   const [lastName, setLastName] = useState(defaultProfile.lastName);
@@ -35,37 +38,52 @@ const EditProfileScreen: React.FC = () => {
   const [avatarUri] = useState(defaultProfile.avatarUri);
 
   const handleSave = (): void => {
-    Alert.alert('Saved', 'Profile updated.', [{ text: 'OK', onPress: () => router.back() }]);
+    Alert.alert("Saved", "Profile updated.", [
+      { text: "OK", onPress: () => router.back() },
+    ]);
   };
 
   const handleChangePhoto = (): void => {
-    Alert.alert('Change Photo', 'Choose photo or remove?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Choose Photo', onPress: () => {} },
-      { text: 'Remove Photo', style: 'destructive', onPress: () => {} },
+    Alert.alert("Change Photo", "Choose photo or remove?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Choose Photo", onPress: () => {} },
+      { text: "Remove Photo", style: "destructive", onPress: () => {} },
     ]);
   };
 
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        style={profileListStyles.scroll}
+        style={[profileListStyles.scroll, { paddingTop: 40 }]}
         contentContainerStyle={profileListStyles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        directionalLockEnabled={true}
+        scrollEventThrottle={16}
+      >
         <ProfileSection>
           <Pressable
             onPress={handleChangePhoto}
-            style={({ pressed }) => [styles.avatarRow, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.avatarRow,
+              pressed && styles.pressed,
+            ]}
             accessibilityRole="button"
-            accessibilityLabel="Change profile photo">
+            accessibilityLabel="Change profile photo"
+          >
             <View style={styles.avatarRowInner}>
               {avatarUri ? (
                 <Image source={{ uri: avatarUri }} style={styles.avatar} />
               ) : (
-                <View style={[styles.avatarPlaceholder, { backgroundColor: secondaryColor }]}>
+                <View
+                  style={[
+                    styles.avatarPlaceholder,
+                    { backgroundColor: secondaryColor },
+                  ]}
+                >
                   <ThemedText type="screenTitle" style={styles.avatarInitials}>
-                    {firstName?.[0] ?? ''}{lastName?.[0] ?? ''}
+                    {firstName?.[0] ?? ""}
+                    {lastName?.[0] ?? ""}
                   </ThemedText>
                 </View>
               )}
@@ -132,7 +150,10 @@ const EditProfileScreen: React.FC = () => {
             </ThemedText>
           </View>
           <TextInput
-            style={[styles.bioInput, { color: textColor, borderColor: separatorColor }]}
+            style={[
+              styles.bioInput,
+              { color: textColor, borderColor: separatorColor },
+            ]}
             value={bio}
             onChangeText={(t) => setBio(t.slice(0, BIO_MAX_LENGTH))}
             placeholder="Tell us a bit about yourself"
@@ -151,14 +172,19 @@ const EditProfileScreen: React.FC = () => {
               pressed && styles.pressed,
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Save">
+            accessibilityLabel="Save"
+          >
             <ThemedText style={styles.primaryButtonText}>Save</ThemedText>
           </Pressable>
           <Pressable
             onPress={() => router.back()}
-            style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              pressed && styles.pressed,
+            ]}
             accessibilityRole="button"
-            accessibilityLabel="Cancel">
+            accessibilityLabel="Cancel"
+          >
             <ThemedText type="bodyPrimary" colorName="secondary">
               Cancel
             </ThemedText>
@@ -179,8 +205,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   avatarRowInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   avatar: {
@@ -192,23 +218,23 @@ const styles = StyleSheet.create({
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatarInitials: {
-    color: '#fff',
+    color: "#fff",
   },
   input: {
     flex: 1,
     fontSize: 16,
     lineHeight: 24,
     minWidth: 100,
-    textAlign: 'right',
+    textAlign: "right",
     padding: 0,
   },
   bioHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     marginBottom: Spacing.xs,
   },
   bioInput: {
@@ -227,16 +253,16 @@ const styles = StyleSheet.create({
   primaryButton: {
     paddingVertical: Spacing.sm + 2,
     borderRadius: RADIUS_SMALL,
-    alignItems: 'center',
+    alignItems: "center",
   },
   primaryButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   secondaryButton: {
     paddingVertical: Spacing.sm + 2,
-    alignItems: 'center',
+    alignItems: "center",
   },
   pressed: {
     opacity: 0.7,
