@@ -2,21 +2,19 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    View,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
 } from "react-native";
 
 import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import {
-    RADIUS_SMALL,
-    Spacing
-} from "@/constants/design-system";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { RADIUS_GROUP, RADIUS_SMALL, Spacing } from "@/constants/design-system";
 import { profileListStyles } from "@/constants/profile-list";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { defaultProfile } from "@/lib/profile-placeholder";
@@ -143,7 +141,12 @@ const EditProfileScreen: React.FC = () => {
           </ProfileGroup>
         </ProfileSection>
 
-        <ProfileSection title="Short bio">
+        <ProfileSection
+          title="Short bio"
+          titleIcon={
+            <IconSymbol name={"create" as any} size={24} color="#5AC8FA" />
+          }
+        >
           <View style={styles.bioHeaderRow}>
             <ThemedText type="caption" colorName="secondary">
               {bio.length}/{BIO_MAX_LENGTH}
@@ -252,7 +255,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     paddingVertical: Spacing.sm + 2,
-    borderRadius: RADIUS_SMALL,
+    borderRadius: RADIUS_GROUP,
     alignItems: "center",
   },
   primaryButtonText: {

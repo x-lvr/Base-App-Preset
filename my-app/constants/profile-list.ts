@@ -1,16 +1,17 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 import {
-  Spacing,
-  ROW_MIN_HEIGHT,
-  RADIUS_GROUP,
-  PAGE_HORIZONTAL,
-  SECTION_VERTICAL,
-} from './design-system';
+    PAGE_HORIZONTAL,
+    RADIUS_GROUP,
+    ROW_MIN_HEIGHT,
+    SECTION_VERTICAL,
+    Spacing,
+} from "./design-system";
 
 /**
  * Shared list styles for profile / settings pages.
- * Standardized: 8-pt grid, row height 48–56, group radius 14.
+ * iOS Settings-style: rounded group cards, inset separators.
+ * Standardized: 8-pt grid, row height 48–56, group radius 14–16.
  */
 export const profileListStyles = StyleSheet.create({
   scroll: {
@@ -30,12 +31,14 @@ export const profileListStyles = StyleSheet.create({
   },
   group: {
     borderRadius: RADIUS_GROUP,
-    overflow: 'hidden',
+    overflow: "hidden",
+    // iOS Settings-style: subtle border for card definition
+    backgroundColor: "transparent",
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     minHeight: ROW_MIN_HEIGHT,
     paddingVertical: SECTION_VERTICAL,
     paddingHorizontal: PAGE_HORIZONTAL,
@@ -62,14 +65,14 @@ export const profileListStyles = StyleSheet.create({
     minHeight: ROW_MIN_HEIGHT,
     paddingVertical: SECTION_VERTICAL,
     paddingHorizontal: PAGE_HORIZONTAL,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   dangerZone: {
     marginTop: Spacing.xxl,
     marginHorizontal: PAGE_HORIZONTAL,
     borderRadius: RADIUS_GROUP,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 });
 

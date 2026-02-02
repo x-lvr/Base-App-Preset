@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 
 import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
 import { ThemedView } from "@/components/themed-view";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { profileListStyles } from "@/constants/profile-list";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { defaultProfile } from "@/lib/profile-placeholder";
@@ -11,18 +12,47 @@ interface AccountRow {
   label: string;
   value: string;
   readOnly?: boolean;
+  icon?: any;
+  iconColor?: string;
 }
 
 const ACCOUNT_ROWS: ReadonlyArray<AccountRow> = [
-  { label: "Email address", value: defaultProfile.email },
-  { label: "Phone number", value: defaultProfile.phone },
-  { label: "Region / country", value: defaultProfile.region },
-  { label: "Language", value: defaultProfile.language },
-  { label: "Time zone", value: defaultProfile.timeZone },
+  {
+    label: "Email address",
+    value: defaultProfile.email,
+    icon: "mail",
+    iconColor: "#007AFF",
+  },
+  {
+    label: "Phone number",
+    value: defaultProfile.phone,
+    icon: "phone",
+    iconColor: "#34C759",
+  },
+  {
+    label: "Region / country",
+    value: defaultProfile.region,
+    icon: "public",
+    iconColor: "#FF9500",
+  },
+  {
+    label: "Language",
+    value: defaultProfile.language,
+    icon: "language",
+    iconColor: "#5AC8FA",
+  },
+  {
+    label: "Time zone",
+    value: defaultProfile.timeZone,
+    icon: "schedule",
+    iconColor: "#AF52DE",
+  },
   {
     label: "Account created",
     value: defaultProfile.accountCreatedAt,
     readOnly: true,
+    icon: "today",
+    iconColor: "#FF3B30",
   },
 ];
 
@@ -38,7 +68,12 @@ const AccountIdentityScreen: React.FC = () => {
         directionalLockEnabled={true}
         scrollEventThrottle={16}
       >
-        <ProfileSection title="Account & Identity">
+        <ProfileSection
+          title="Account & Identity"
+          titleIcon={
+            <IconSymbol name={"person" as any} size={24} color="#FF9500" />
+          }
+        >
           <ProfileGroup>
             {ACCOUNT_ROWS.map((item, index) => (
               <ProfileRow
@@ -46,6 +81,13 @@ const AccountIdentityScreen: React.FC = () => {
                 label={item.label}
                 value={item.value}
                 valueSecondary={item.readOnly ?? false}
+                leftIcon={
+                  <IconSymbol
+                    name={item.icon as any}
+                    size={24}
+                    color={item.iconColor ?? "#007AFF"}
+                  />
+                }
                 hasBorder={index < ACCOUNT_ROWS.length - 1}
                 borderColor={separatorColor}
                 accessibilityLabel={`${item.label}: ${item.value}`}

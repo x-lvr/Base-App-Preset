@@ -3,6 +3,7 @@ import { Alert, ScrollView, StyleSheet, Switch } from "react-native";
 
 import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
 import { ThemedView } from "@/components/themed-view";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { profileListStyles } from "@/constants/profile-list";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { defaultSecurityPrivacy } from "@/lib/profile-placeholder";
@@ -39,11 +40,17 @@ const SecurityPrivacyScreen: React.FC = () => {
         directionalLockEnabled={true}
         scrollEventThrottle={16}
       >
-        <ProfileSection title="Security">
+        <ProfileSection
+          title="Security"
+          titleIcon={
+            <IconSymbol name={"lock" as any} size={24} color="#FF3B30" />
+          }
+        >
           <ProfileGroup>
             <ProfileRow
               label="Change password"
               showDisclosure
+              leftIcon={<IconSymbol name="lock" size={24} color="#FF9500" />}
               hasBorder
               borderColor={separatorColor}
               onPress={handleChangePassword}
@@ -51,6 +58,9 @@ const SecurityPrivacyScreen: React.FC = () => {
             />
             <ProfileRow
               label="Biometric authentication"
+              leftIcon={
+                <IconSymbol name="fingerprint" size={24} color="#34C759" />
+              }
               rightElement={
                 <Switch
                   value={biometricEnabled}
@@ -64,6 +74,9 @@ const SecurityPrivacyScreen: React.FC = () => {
             />
             <ProfileRow
               label="Two-factor authentication"
+              leftIcon={
+                <IconSymbol name="verified" size={24} color="#007AFF" />
+              }
               rightElement={
                 <Switch
                   value={twoFactorEnabled}
@@ -77,7 +90,12 @@ const SecurityPrivacyScreen: React.FC = () => {
           </ProfileGroup>
         </ProfileSection>
 
-        <ProfileSection title="Privacy">
+        <ProfileSection
+          title="Privacy"
+          titleIcon={
+            <IconSymbol name={"fingerprint" as any} size={24} color="#34C759" />
+          }
+        >
           <ProfileGroup>
             <ProfileRow
               label="Profile visibility"

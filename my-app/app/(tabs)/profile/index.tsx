@@ -6,10 +6,8 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import {
-  RADIUS_SMALL,
-  Spacing
-} from "@/constants/design-system";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { RADIUS_SMALL, Spacing } from "@/constants/design-system";
 import { profileListStyles } from "@/constants/profile-list";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { defaultProfile } from "@/lib/profile-placeholder";
@@ -23,11 +21,36 @@ type ProfileRoute =
   | "/profile/devices-sessions"
   | "/profile/data-activity";
 
-const QUICK_ACTIONS: ReadonlyArray<{ label: string; href: ProfileRoute }> = [
-  { label: "Edit Profile", href: "/profile/edit" },
-  { label: "Account & Identity", href: "/profile/account-identity" },
-  { label: "Security & Privacy", href: "/profile/security-privacy" },
-  { label: "Devices / Sessions", href: "/profile/devices-sessions" },
+const QUICK_ACTIONS: ReadonlyArray<{
+  label: string;
+  href: ProfileRoute;
+  iconName: any;
+  iconColor: string;
+}> = [
+  {
+    label: "Edit Profile",
+    href: "/profile/edit",
+    iconName: "pencil" as any,
+    iconColor: "#007AFF",
+  },
+  {
+    label: "Account & Identity",
+    href: "/profile/account-identity",
+    iconName: "person" as any,
+    iconColor: "#34C759",
+  },
+  {
+    label: "Security & Privacy",
+    href: "/profile/security-privacy",
+    iconName: "lock.shield" as any,
+    iconColor: "#FF9500",
+  },
+  {
+    label: "Devices / Sessions",
+    href: "/profile/devices-sessions",
+    iconName: "smartphone" as any,
+    iconColor: "#FF3B30",
+  },
 ] as const;
 
 const ProfileScreen: React.FC = () => {
@@ -118,6 +141,13 @@ const ProfileScreen: React.FC = () => {
                 key={action.href}
                 label={action.label}
                 showDisclosure
+                leftIcon={
+                  <IconSymbol
+                    name={action.iconName}
+                    size={24}
+                    color={action.iconColor}
+                  />
+                }
                 hasBorder={index < QUICK_ACTIONS.length - 1}
                 borderColor={separatorColor}
                 onPress={() => router.push(action.href)}
@@ -132,6 +162,13 @@ const ProfileScreen: React.FC = () => {
             <ProfileRow
               label="Data & Activity"
               showDisclosure
+              leftIcon={
+                <IconSymbol
+                  name={"house.fill" as any}
+                  size={24}
+                  color="#5AC8FA"
+                />
+              }
               hasBorder={false}
               onPress={() => router.push("/profile/data-activity")}
               accessibilityLabel="Data & Activity"

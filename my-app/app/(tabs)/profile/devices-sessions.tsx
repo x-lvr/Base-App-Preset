@@ -3,6 +3,7 @@ import { Alert, ScrollView, StyleSheet } from "react-native";
 
 import { ProfileGroup, ProfileRow, ProfileSection } from "@/components/profile";
 import { ThemedView } from "@/components/themed-view";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { profileListStyles } from "@/constants/profile-list";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { defaultSessions, type SessionItem } from "@/lib/profile-placeholder";
@@ -22,6 +23,13 @@ const SessionRow: React.FC<SessionRowProps> = ({
     label={`${item.deviceName}${item.isCurrent ? " (this device)" : ""}`}
     value={`${item.platform} · ${item.lastActive}`}
     valueSecondary
+    leftIcon={
+      <IconSymbol
+        name="smartphone"
+        size={24}
+        color={item.isCurrent ? "#34C759" : "#007AFF"}
+      />
+    }
     hasBorder={!isLast}
     borderColor={separatorColor}
     accessibilityRole="none"
@@ -61,7 +69,12 @@ const DevicesSessionsScreen: React.FC = () => {
         directionalLockEnabled={true}
         scrollEventThrottle={16}
       >
-        <ProfileSection title="Devices & Sessions">
+        <ProfileSection
+          title="Devices & Sessions"
+          titleIcon={
+            <IconSymbol name={"smartphone" as any} size={24} color="#007AFF" />
+          }
+        >
           <ProfileGroup>
             {sessionRows.map(({ item, isLast }) => (
               <SessionRow
